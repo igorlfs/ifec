@@ -8,41 +8,29 @@ Igor Lacerda Faria da Silva - 2020041973
 
 Gabriel Rocha Martins - 2019006639
 °°°"""
-# |%%--%%| <hhAnwT2oUw|fxCq8VVq5E>
+# |%%--%%| <9mXIl9nkXy|iRL5gMsstH>
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-# |%%--%%| <fxCq8VVq5E|uB0SICV32l>
+# |%%--%%| <iRL5gMsstH|PbFbtyTq7I>
 
 from typing import Callable
 
-# |%%--%%| <uB0SICV32l|IUaidL4GFq>
+# |%%--%%| <PbFbtyTq7I|xN6impb1pJ>
 
-Y_MAX_1 = 1
-INF_1 = 0
-SUP_1 = 1
-SIZE_1 = 1000
-ITERATIONS_PLOT = 1000
-SIZES = [100, 1000, 10000]
+ITERATIONS = 1000
+SIZES = [10**2, 10**3, 10**4]
+errors: list[float] = []
 
-# |%%--%%| <IUaidL4GFq|YIKXtt19iS>
+# |%%--%%| <xN6impb1pJ|HsYJ16xuwZ>
 
-x = np.linspace(0, 1, num=500)
-y = 1 - x**2
+def calculo_erro(values: np.ndarray, mean: float) -> float:
+    variancia = np.square(values - mean).mean()
+    desvio = np.sqrt(variancia)
+    return desvio / np.sqrt(values.size)
 
-plt.plot(x, y)
-plt.show()
-
-# |%%--%%| <YIKXtt19iS|EP2n26YOmI>
-
-
-def funct_1(x: float) -> float:
-    return 1 - x**2
-
-
-# |%%--%%| <EP2n26YOmI|W6P36uSpVa>
-
+# |%%--%%| <HsYJ16xuwZ|h7MZ8QtJvI>
 
 def first_method(inf: float, sup: float, funct, size: int, y_max: int):
     inside = 0
@@ -55,31 +43,15 @@ def first_method(inf: float, sup: float, funct, size: int, y_max: int):
 
     return inside / size * y_max * (sup - inf)
 
-
-# |%%--%%| <W6P36uSpVa|hIOA3Kje1S>
-
+# |%%--%%| <h7MZ8QtJvI|cDJUexvCuk>
 
 def second_method(inf: float, sup: float, funct, size: int):
     mutiplier = (sup - inf) / size
     x = np.random.uniform(inf, sup, size)
-    x = funct(x)
-    return mutiplier * np.sum(x)
+    y = funct(x)
+    return mutiplier * np.sum(y)
 
-
-# |%%--%%| <hIOA3Kje1S|tob9o6ohhg>
-
-
-def plot_hist_iterate_method(
-    iterations: int, inf: float, sup: float, funct, size: int, y
-):
-    data = np.zeros(iterations)
-    for i in range(iterations):
-        data[i] = choose_method(inf, sup, funct, size, y)
-    plt.hist(data)
-
-
-# |%%--%%| <tob9o6ohhg|aeI8BzcCf5>
-
+# |%%--%%| <cDJUexvCuk|i8XSZc97EB>
 
 def choose_method(inf: float, sup: float, funct, size: int, y):
     if y is not None:
@@ -87,92 +59,116 @@ def choose_method(inf: float, sup: float, funct, size: int, y):
     else:
         return second_method(inf, sup, funct, size)
 
+# |%%--%%| <i8XSZc97EB|mNvG3mxrvl>
 
-# |%%--%%| <aeI8BzcCf5|oQYU2M50WQ>
+def plot_hist_iterate_method(
+    iterations: int, inf: float, sup: float, funct, size: int, y
+):
+    data: np.ndarray = np.zeros(iterations)
+    for i in range(iterations):
+        data[i] = choose_method(inf, sup, funct, size, y)
+    plt.hist(data)
+    return calculo_erro(data, data.mean())
 
-plot_hist_iterate_method(ITERATIONS_PLOT, INF_1, SUP_1, funct_1, SIZE_1, None)
+# |%%--%%| <mNvG3mxrvl|to9NuhwRB6>
 
-# |%%--%%| <oQYU2M50WQ|iJsXvfyynG>
+def plot_all(inf: float, sup: float, funct: Callable, y: float | None):
+    for size in SIZES:
+        errors.append(plot_hist_iterate_method(ITERATIONS, inf, sup, funct, size, y))
+        errors.append(plot_hist_iterate_method(ITERATIONS, inf, sup, funct, size, None))
+        plt.show()
 
-for i in SIZES:
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_1, SUP_1, funct_1, i, Y_MAX_1)
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_1, SUP_1, funct_1, i, None)
-    plt.show()
+# |%%--%%| <to9NuhwRB6|SY2pi1SESw>
+r"""°°°
+# Função 1
+°°°"""
+# |%%--%%| <SY2pi1SESw|jBAPrBcCXh>
 
-# |%%--%%| <iJsXvfyynG|N6ZllCxLtl>
+def plot_1():
+    x = np.linspace(0, 1, 100)
+    y = 1 - x**2
+    plt.title("$1 - x^2$")
+    plt.plot(x, y)
+
+
+plot_1()
+
+# |%%--%%| <jBAPrBcCXh|cREtW1Tuma>
+
+def funct_1(x: float) -> float:
+    return 1 - x**2
+
+# |%%--%%| <cREtW1Tuma|EEzd0Fa9KD>
+
+INF_1 = 0
+SUP_1 = 1
+Y_MAX_1 = 1
+
+# |%%--%%| <EEzd0Fa9KD|ap1uyUoh2a>
+
+plot_all(INF_1, SUP_1, funct_1, Y_MAX_1)
+
+# |%%--%%| <ap1uyUoh2a|HsiF964HAC>
+r"""°°°
+# Função 2
+°°°"""
+# |%%--%%| <HsiF964HAC|qZ2Opt7df2>
+
+def plot_2():
+    x = np.linspace(0, 1, 100)
+    y = np.e**x
+    plt.title("$e^x$")
+    plt.plot(x, y)
+
+
+plot_2()
+
+# |%%--%%| <qZ2Opt7df2|2GOVvLSQRa>
+
+def funct_2(x: float) -> float:
+    return np.e**x
+
+# |%%--%%| <2GOVvLSQRa|iTySn7cLeM>
 
 INF_2 = 0
 SUP_2 = 1
 Y_MAX_2 = 3
 
-# |%%--%%| <N6ZllCxLtl|kd3wtOCzpX>
+# |%%--%%| <iTySn7cLeM|jLyFt484BR>
 
+plot_all(INF_2, SUP_2, funct_2, Y_MAX_2)
 
-def plot_2():
-    x = np.linspace(0, 1, 100)
-    y = np.e**x
-    plt.plot(x, y)
-
-
-# |%%--%%| <kd3wtOCzpX|WoeccuvDbf>
-
-
-def funct_2(x: float) -> float:
-    return np.e**x
-
-
-# |%%--%%| <WoeccuvDbf|bkc3zNKBGb>
-
-plot_hist_iterate_method(ITERATIONS_PLOT, INF_2, SUP_2, funct_2, 1000, Y_MAX_2)
-
-# |%%--%%| <bkc3zNKBGb|xltxGYe6q0>
-
-for i in SIZES:
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_2, SUP_2, funct_2, i, Y_MAX_2)
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_2, SUP_2, funct_2, i, None)
-    plt.show()
-
-# |%%--%%| <xltxGYe6q0|nNkIFdjELH>
-
-INF_3 = 0
-SUP_3 = np.pi
-Y_MAX_3 = 1
-
-# |%%--%%| <nNkIFdjELH|tmO3Tr9UQi>
-
+# |%%--%%| <jLyFt484BR|5S7mj5cET5>
+r"""°°°
+# Função 3
+°°°"""
+# |%%--%%| <5S7mj5cET5|A0GC30Ab6c>
 
 def plot_3():
     x = np.linspace(INF_3, SUP_3, 100)
     y = np.sin(x) ** 2
-    plt.title("Função 3 - $\sin(x)^2")
+    plt.title("$\sin(x)^2$")
     plt.plot(x, y)
 
 
 plot_3()
 
-# |%%--%%| <tmO3Tr9UQi|mzivS3wjH5>
-
+# |%%--%%| <A0GC30Ab6c|yMAiVqu0zm>
 
 def funct_3(x: float) -> float:
     return np.sin(x) ** 2
 
+# |%%--%%| <yMAiVqu0zm|ftlodFzdN2>
 
-# |%%--%%| <mzivS3wjH5|0JgqBkv03n>
+INF_3 = 0
+SUP_3 = np.pi
+Y_MAX_3 = 1
 
-# plot_hist_iterate_method(ITERATIONS_PLOT, INF_3, SUP_3, funct_3, 100, Y_MAX_3)
+# |%%--%%| <ftlodFzdN2|juhIGzR5e2>
 
-# |%%--%%| <0JgqBkv03n|ndMEd2YPDo>
-r"""°°°
-# Função 3
-°°°"""
-# |%%--%%| <ndMEd2YPDo|KFDFTBySNV>
+plot_all(INF_3, SUP_3, funct_3, Y_MAX_3)
 
-for i in SIZES:
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_3, SUP_3, funct_3, i, Y_MAX_3)
-    plot_hist_iterate_method(ITERATIONS_PLOT, INF_3, SUP_3, funct_3, i, None)
-    plt.show()
-
-# |%%--%%| <KFDFTBySNV|ehEZ9MbGL0>
+# |%%--%%| <juhIGzR5e2|ZfJUYuVduk>
 r"""°°°
 Em primeiro lugar, como esperado pelo Teorema do Limite Central, a distribuição
 dos valores gerados nos histogramas se aproxima de uma distribuição normal,
@@ -189,111 +185,79 @@ coordenadas x e y. O método de Monte Carlo, utilizando o valor médio, selecion
 aleatoriamente apenas o valor de x, tornando sua distribuição de valores menos
 incerta. Assim, o desvio padrão do segundo método se mostra menor. 
 °°°"""
-# |%%--%%| <ehEZ9MbGL0|7FAEGObrRw>
+# |%%--%%| <ZfJUYuVduk|EqX5Dpr7kM>
 
+errors
 
-def calculo_erro(values, mean, N):
-    variancia = np.square(values - mean).mean()
-    desvio = np.sqrt(variancia)
-    return desvio / np.sqrt(N)
+# |%%--%%| <EqX5Dpr7kM|7JYWek0hFb>
+r"""°°°
+## Erros
 
-
-# |%%--%%| <7FAEGObrRw|Ddlk1fCE08>
+O cálculo dos erros estimativos seguiram o que era esperado: quanto maior o
+número de valores gerados para estimar a integral, menor será a diferença entre
+a estimativa e o valor analítico. É importante salientar que os erros foram
+calculados considerando que não há correlação entre os valores gerados, ou
+seja, assumimos que o gerador de números aleatórios é perfeito. Na prática esse
+pode não ser o caso, mas o gerador de números aleatório da biblioteca Numpy
+garante um alto nível de independência entre os números gerados.
+°°°"""
+# |%%--%%| <7JYWek0hFb|RJAGPYrv7f>
 r"""°°°
 # Exercício 4
 °°°"""
-# |%%--%%| <Ddlk1fCE08|jGY4loShRJ>
+# |%%--%%| <RJAGPYrv7f|kuYz30wLFK>
 r"""°°°
 Neste exercício utilizaremos o método 2 de Monte Carlo para aproximar o valor
 de um integral em 9 dimensões
 °°°"""
-# |%%--%%| <jGY4loShRJ|PmuoidDmAk>
-r"""°°°
-Criando função:
-°°°"""
-# |%%--%%| <PmuoidDmAk|89syOrRWv3>
+# |%%--%%| <kuYz30wLFK|oT2wFQ1tMy>
 
-
-def funct4(x: list):
+def funct_4(x: list):
     return 1 / ((x[0] + x[1]) * x[2] + (x[3] + x[4]) * x[5] + (x[6] + x[7]) * x[8])
 
-
-# |%%--%%| <89syOrRWv3|qXPSrvmMFW>
+# |%%--%%| <oT2wFQ1tMy|ABrpcT46Wo>
 r"""°°°
-Criando funçao que generaliza a aplicaçao do método 2 ( MonteCarlo ) para esse caso
+Criando função que generaliza a aplicação do método 2 ( MonteCarlo ) para esse caso
 °°°"""
-# |%%--%%| <qXPSrvmMFW|apwEs1zQik>
+# |%%--%%| <ABrpcT46Wo|fpFwFhLwoE>
 
-
-def MonteCarlo_9d(N, funcao: Callable):
+def MonteCarlo_9d(N, funct: Callable):
     acumulador = 0
     for i in range(N):
-        acumulador = acumulador + funcao(np.random.uniform(0, 1, 9))
+        acumulador = acumulador + funct(np.random.uniform(0, 1, 9))
     return acumulador / N
 
-
-# |%%--%%| <apwEs1zQik|XnZ4LSeipw>
+# |%%--%%| <fpFwFhLwoE|ij1f4jB38d>
 r"""°°°
-Usando funçao para criar 1000 amostras com N=100 e aproximar o valor dessa integral
+Usando função para criar 1000 amostras com N=100 e aproximar o valor dessa integral
 °°°"""
-# |%%--%%| <XnZ4LSeipw|WFnFrNdAoU>
+# |%%--%%| <ij1f4jB38d|T0UeeKAQ9n>
 
 ITERATIONS_4 = 1000
+SIZES_4 = [10**2, 10**3, 10**4]
 
-# |%%--%%| <WFnFrNdAoU|eJjvmq6Vtn>
-
+# |%%--%%| <T0UeeKAQ9n|id5PZloQXB>
 
 def carlao(size: float):
     amostra = np.zeros(ITERATIONS_4)
     for i in range(ITERATIONS_4):
-        amostra[i] = MonteCarlo_9d(size, funct4)
+        amostra[i] = MonteCarlo_9d(size, funct_4)
     return amostra.mean(), amostra
 
+# |%%--%%| <id5PZloQXB|GMMjPcjxWm>
 
-# |%%--%%| <eJjvmq6Vtn|EucJAaK1yb>
+for size in SIZES_4:
+    media, amostra = carlao(size)
+    plt.hist(amostra)
+    plt.show()
+    print(calculo_erro(amostra, media))
 
-media_1, amostra_1 = carlao(10**2)
-
-# |%%--%%| <EucJAaK1yb|oTn4pzzZK7>
-
-calculo_erro(amostra_1, media_1, 10**2)
-
-# |%%--%%| <oTn4pzzZK7|P8z3f8G7W8>
-
-plt.hist(amostra_1)
-
-# |%%--%%| <P8z3f8G7W8|RcDGk5WzrH>
-
-media_2, amostra_2 = carlao(10**3)
-
-# |%%--%%| <RcDGk5WzrH|0URzhDm8jv>
-
-calculo_erro(amostra_2, media_2, 10**2)
-
-# |%%--%%| <0URzhDm8jv|PKJB5Wngn3>
-
-plt.hist(amostra_2)
-
-# |%%--%%| <PKJB5Wngn3|T6YsRxWzds>
-
-media_3, amostra_3 = carlao(10**4)
-
-# |%%--%%| <T6YsRxWzds|lvloOZ0y3Q>
-
-calculo_erro(amostra_3, media_3, 10**2)
-
-# |%%--%%| <lvloOZ0y3Q|UH8ZIHamU8>
-
-plt.hist(amostra_3)
-
-# |%%--%%| <UH8ZIHamU8|ZyQePKSO1g>
-
-# media_4, amostra_4 = carlao(10**5)
-
-# |%%--%%| <ZyQePKSO1g|4xMi6H3WEH>
-
-# calculo_erro(amostra_4, media_4, 10)
-
-# |%%--%%| <4xMi6H3WEH|KsSdyyIR9q>
-
-# plt.hist(amostra_4)
+# |%%--%%| <GMMjPcjxWm|CcNFvmrZb5>
+r"""°°°
+O cálculo da integral da função de 9 variáveis se comportou como esperado, dado
+que com o aumento no tamanho da amostra para fazer essa aproximação, o desvio
+padrão diminuiu. Além disso, é possível notar que a aproximação utilizando o
+método 2 apresenta um desempenho melhor do que o esperado, dado que mesmo com o
+aumento de números aleatórios criados houve uma certa manutenção no tempo de
+execução.
+°°°"""
