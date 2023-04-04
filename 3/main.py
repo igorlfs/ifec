@@ -1,3 +1,6 @@
+# pyright: reportUnusedExpression=false
+
+# |%%--%%| <ZYAk6vJeSH|9mXIl9nkXy>
 r"""°°°
 # Exercício avaliativo 1
 ## Introdução a Física Estatística e Computacional
@@ -25,16 +28,19 @@ errors: list[float] = []
 
 # |%%--%%| <xN6impb1pJ|HsYJ16xuwZ>
 
+
 def calculo_erro(values: np.ndarray, mean: float) -> float:
     variancia = np.square(values - mean).mean()
     desvio = np.sqrt(variancia)
     return desvio / np.sqrt(values.size)
 
+
 # |%%--%%| <HsYJ16xuwZ|h7MZ8QtJvI>
+
 
 def first_method(inf: float, sup: float, funct, size: int, y_max: int):
     inside = 0
-    for i in range(size):
+    for _ in range(size):
         x = np.random.uniform(inf, sup, 1)
         y = np.random.uniform(0, y_max, 1)
         expected_y = funct(x)
@@ -43,7 +49,9 @@ def first_method(inf: float, sup: float, funct, size: int, y_max: int):
 
     return inside / size * y_max * (sup - inf)
 
+
 # |%%--%%| <h7MZ8QtJvI|cDJUexvCuk>
+
 
 def second_method(inf: float, sup: float, funct, size: int):
     mutiplier = (sup - inf) / size
@@ -51,7 +59,9 @@ def second_method(inf: float, sup: float, funct, size: int):
     y = funct(x)
     return mutiplier * np.sum(y)
 
+
 # |%%--%%| <cDJUexvCuk|i8XSZc97EB>
+
 
 def choose_method(inf: float, sup: float, funct, size: int, y):
     if y is not None:
@@ -59,7 +69,9 @@ def choose_method(inf: float, sup: float, funct, size: int, y):
     else:
         return second_method(inf, sup, funct, size)
 
+
 # |%%--%%| <i8XSZc97EB|mNvG3mxrvl>
+
 
 def plot_hist_iterate_method(
     iterations: int, inf: float, sup: float, funct, size: int, y
@@ -68,9 +80,13 @@ def plot_hist_iterate_method(
     for i in range(iterations):
         data[i] = choose_method(inf, sup, funct, size, y)
     plt.hist(data)
-    return calculo_erro(data, data.mean())
+    mean = data.mean()
+    print(f"Média: {mean}")
+    return calculo_erro(data, mean)
+
 
 # |%%--%%| <mNvG3mxrvl|to9NuhwRB6>
+
 
 def plot_all(inf: float, sup: float, funct: Callable, y: float | None):
     for size in SIZES:
@@ -78,14 +94,22 @@ def plot_all(inf: float, sup: float, funct: Callable, y: float | None):
         errors.append(plot_hist_iterate_method(ITERATIONS, inf, sup, funct, size, None))
         plt.show()
 
+
 # |%%--%%| <to9NuhwRB6|SY2pi1SESw>
 r"""°°°
 # Função 1
 °°°"""
-# |%%--%%| <SY2pi1SESw|jBAPrBcCXh>
+# |%%--%%| <SY2pi1SESw|EEzd0Fa9KD>
+
+INF_1 = 0
+SUP_1 = 1
+Y_MAX_1 = 1
+
+# |%%--%%| <EEzd0Fa9KD|jBAPrBcCXh>
+
 
 def plot_1():
-    x = np.linspace(0, 1, 100)
+    x = np.linspace(INF_1, SUP_1, 100)
     y = 1 - x**2
     plt.title("$1 - x^2$")
     plt.plot(x, y)
@@ -95,16 +119,12 @@ plot_1()
 
 # |%%--%%| <jBAPrBcCXh|cREtW1Tuma>
 
+
 def funct_1(x: float) -> float:
     return 1 - x**2
 
-# |%%--%%| <cREtW1Tuma|EEzd0Fa9KD>
 
-INF_1 = 0
-SUP_1 = 1
-Y_MAX_1 = 1
-
-# |%%--%%| <EEzd0Fa9KD|ap1uyUoh2a>
+# |%%--%%| <cREtW1Tuma|ap1uyUoh2a>
 
 plot_all(INF_1, SUP_1, funct_1, Y_MAX_1)
 
@@ -112,10 +132,17 @@ plot_all(INF_1, SUP_1, funct_1, Y_MAX_1)
 r"""°°°
 # Função 2
 °°°"""
-# |%%--%%| <HsiF964HAC|qZ2Opt7df2>
+# |%%--%%| <HsiF964HAC|iTySn7cLeM>
+
+INF_2 = 0
+SUP_2 = 1
+Y_MAX_2 = 3
+
+# |%%--%%| <iTySn7cLeM|qZ2Opt7df2>
+
 
 def plot_2():
-    x = np.linspace(0, 1, 100)
+    x = np.linspace(INF_2, SUP_2, 100)
     y = np.e**x
     plt.title("$e^x$")
     plt.plot(x, y)
@@ -125,16 +152,12 @@ plot_2()
 
 # |%%--%%| <qZ2Opt7df2|2GOVvLSQRa>
 
+
 def funct_2(x: float) -> float:
     return np.e**x
 
-# |%%--%%| <2GOVvLSQRa|iTySn7cLeM>
 
-INF_2 = 0
-SUP_2 = 1
-Y_MAX_2 = 3
-
-# |%%--%%| <iTySn7cLeM|jLyFt484BR>
+# |%%--%%| <2GOVvLSQRa|jLyFt484BR>
 
 plot_all(INF_2, SUP_2, funct_2, Y_MAX_2)
 
@@ -142,12 +165,19 @@ plot_all(INF_2, SUP_2, funct_2, Y_MAX_2)
 r"""°°°
 # Função 3
 °°°"""
-# |%%--%%| <5S7mj5cET5|A0GC30Ab6c>
+# |%%--%%| <5S7mj5cET5|ftlodFzdN2>
+
+INF_3 = 0
+SUP_3 = np.pi
+Y_MAX_3 = 1
+
+# |%%--%%| <ftlodFzdN2|A0GC30Ab6c>
+
 
 def plot_3():
     x = np.linspace(INF_3, SUP_3, 100)
     y = np.sin(x) ** 2
-    plt.title("$\sin(x)^2$")
+    plt.title(r"$\sin(x)^2$")
     plt.plot(x, y)
 
 
@@ -155,16 +185,12 @@ plot_3()
 
 # |%%--%%| <A0GC30Ab6c|yMAiVqu0zm>
 
+
 def funct_3(x: float) -> float:
     return np.sin(x) ** 2
 
-# |%%--%%| <yMAiVqu0zm|ftlodFzdN2>
 
-INF_3 = 0
-SUP_3 = np.pi
-Y_MAX_3 = 1
-
-# |%%--%%| <ftlodFzdN2|juhIGzR5e2>
+# |%%--%%| <yMAiVqu0zm|juhIGzR5e2>
 
 plot_all(INF_3, SUP_3, funct_3, Y_MAX_3)
 
@@ -212,8 +238,10 @@ de um integral em 9 dimensões
 °°°"""
 # |%%--%%| <kuYz30wLFK|oT2wFQ1tMy>
 
+
 def funct_4(x: list):
     return 1 / ((x[0] + x[1]) * x[2] + (x[3] + x[4]) * x[5] + (x[6] + x[7]) * x[8])
+
 
 # |%%--%%| <oT2wFQ1tMy|ABrpcT46Wo>
 r"""°°°
@@ -221,15 +249,18 @@ Criando função que generaliza a aplicação do método 2 ( MonteCarlo ) para e
 °°°"""
 # |%%--%%| <ABrpcT46Wo|fpFwFhLwoE>
 
+
 def MonteCarlo_9d(N, funct: Callable):
     acumulador = 0
-    for i in range(N):
+    for _ in range(N):
         acumulador = acumulador + funct(np.random.uniform(0, 1, 9))
     return acumulador / N
 
+
 # |%%--%%| <fpFwFhLwoE|ij1f4jB38d>
 r"""°°°
-Usando função para criar 1000 amostras com N=100 e aproximar o valor dessa integral
+Foram escolhidas 1000 iterações do algoritmo, uma vez que um número maior não
+melhorou a aproximação.
 °°°"""
 # |%%--%%| <ij1f4jB38d|T0UeeKAQ9n>
 
@@ -238,11 +269,13 @@ SIZES_4 = [10**2, 10**3, 10**4]
 
 # |%%--%%| <T0UeeKAQ9n|id5PZloQXB>
 
+
 def carlao(size: float):
     amostra = np.zeros(ITERATIONS_4)
     for i in range(ITERATIONS_4):
         amostra[i] = MonteCarlo_9d(size, funct_4)
     return amostra.mean(), amostra
+
 
 # |%%--%%| <id5PZloQXB|GMMjPcjxWm>
 
@@ -250,6 +283,7 @@ for size in SIZES_4:
     media, amostra = carlao(size)
     plt.hist(amostra)
     plt.show()
+    print(media)
     print(calculo_erro(amostra, media))
 
 # |%%--%%| <GMMjPcjxWm|CcNFvmrZb5>
@@ -258,6 +292,5 @@ O cálculo da integral da função de 9 variáveis se comportou como esperado, d
 que com o aumento no tamanho da amostra para fazer essa aproximação, o desvio
 padrão diminuiu. Além disso, é possível notar que a aproximação utilizando o
 método 2 apresenta um desempenho melhor do que o esperado, dado que mesmo com o
-aumento de números aleatórios criados houve uma certa manutenção no tempo de
-execução.
+aumento de números aleatórios criados, o tempo de execução não aumentou tanto.
 °°°"""
