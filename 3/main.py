@@ -23,16 +23,16 @@ from typing import Callable
 # |%%--%%| <PbFbtyTq7I|xN6impb1pJ>
 
 ITERATIONS = 1000
-SIZES = [10**2, 10**3, 10**4]
+SAMPLE_SIZES = [10**2, 10**3, 10**4]
 errors: list[float] = []
 
 # |%%--%%| <xN6impb1pJ|HsYJ16xuwZ>
 
 
 def calculo_erro(values: np.ndarray, mean: float) -> float:
-    variancia = np.square(values - mean).mean()
-    desvio = np.sqrt(variancia)
-    return desvio / np.sqrt(values.size)
+    variance = np.square(values - mean).mean()
+    std = np.sqrt(variance)
+    return std / np.sqrt(values.size)
 
 
 # |%%--%%| <HsYJ16xuwZ|h7MZ8QtJvI>
@@ -89,7 +89,7 @@ def plot_hist_iterate_method(
 
 
 def plot_all(inf: float, sup: float, funct: Callable, y: float | None):
-    for size in SIZES:
+    for size in SAMPLE_SIZES:
         errors.append(plot_hist_iterate_method(ITERATIONS, inf, sup, funct, size, y))
         errors.append(plot_hist_iterate_method(ITERATIONS, inf, sup, funct, size, None))
         plt.show()
