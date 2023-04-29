@@ -1,6 +1,9 @@
 [tool.mypy]
 mypy_path = "~/.config/mypy/stubs/"
 
+[tool.ruff]
+ignore = ["E501"]
+
 [tool.poetry]
 name = "ifec"
 version = "0.1.0"
