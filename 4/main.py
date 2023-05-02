@@ -37,7 +37,7 @@ def algoritmo_de_metropolis(L: int, T: float, passos: int):
     spins: np.ndarray = np.array([-1, 1], dtype=np.int8)
 
     variações_de_energia = np.array([8.0, 4.0, 0.0, -4.0, -8.0], dtype=np.float64)
-    expoentes = np.exp(variações_de_energia * 1 / T)
+    expoentes = np.exp(variações_de_energia / T)
 
     N = L * L
     S = np.random.choice(spins, N)
