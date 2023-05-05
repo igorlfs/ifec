@@ -61,7 +61,7 @@ def algoritmo_de_metropolis(L: int, T: float, passos: int):
             índice = int(S[k] * np.sum(S[viz[k]]) * 0.5 + 2)
             if np.random.rand() < expoentes[índice]:
                 S[k] = -1 * S[k]
-        energia[i] = -np.sum(S * (S[viz[:, 0]] + S[viz[:, 1]]))
+        energia[i] = -1 * np.sum(S * (S[viz[:, 0]] + S[viz[:, 1]]))
         magnetização[i] = np.sum(S)
 
     return energia, magnetização
@@ -98,73 +98,55 @@ def calcula_erro(arr: NDArray) -> float:
 # |%%--%%| <gmVPUrJcBr|el040SsWYu>
 
 
-# TODO: tentar botar numba
+@jit(nopython=True)
 def calcula_métricas(
     passo: int,
     seguro: int,
     passosDeMC: int,
     temperatura: float,
     numSpins: int,
-    energias: NDArray[np.float64],
-    magnetizações: NDArray[np.float64],
+    energias: NDArray[np.int32],
+    magnetizações: NDArray[np.int32],
 ):
     magnetizações_mod = np.abs(magnetizações)
-    energias_att: np.ndarray = np.array([energia[seguro:] for energia in energias])
-    magnetizações_att = np.array(
-        [magnetização[seguro:] for magnetização in magnetizações_mod]
-    )
+    energias_útil = energias[seguro:]
+    magnetos_útil = magnetizações_mod[seguro:]
     batches = int((passosDeMC - seguro) / passo)
-    tensor = np.zeros((N, batches, 4))
-    for i in range(N):
-        for j in range(0, passosDeMC - seguro, passo):
-            cal = calor_específico(
-                temperatura, numSpins, energias_att[i][j : j + passo]
-            )
-            sus = suscetibilidade_magnética(
-                temperatura, numSpins, magnetizações_att[i][j : j + passo]
-            )
-            ene = np.average(energias_att[i][j : j + passo]) / numSpins
-            mag = np.average(magnetizações_att[i][j : j + passo]) / numSpins
-            tensor[i][int(j / passo)] = np.array([cal, sus, ene, mag])
+    matriz = np.zeros((batches, 4), dtype=float)
 
-    erros = np.zeros((N, 4))
-    for i, matrix in enumerate(tensor):
-        erro_cal = calcula_erro(matrix[:, 0])
-        erro_sus = calcula_erro(matrix[:, 1])
-        erro_ene = calcula_erro(matrix[:, 2])
-        erro_mag = calcula_erro(matrix[:, 3])
-        erros[i] = np.array([erro_cal, erro_sus, erro_ene, erro_mag])
+    for j in range(0, passosDeMC - seguro, passo):
+        cal = calor_específico(temperatura, numSpins, energias_útil[j : j + passo])
+        sus = suscetibilidade_magnética(
+            temperatura, numSpins, magnetos_útil[j : j + passo]
+        )
+        ene = np.average(energias_útil[j : j + passo]) / numSpins
+        mag = np.average(magnetos_útil[j : j + passo]) / numSpins
+        matriz[int(j / passo)] = np.array([cal, sus, ene, mag])
 
-    novas = [np.average(matrix, axis=0) for matrix in tensor]
+    erros = np.zeros(4)
+    for j in range(4):
+        erros[j] = calcula_erro(matriz[:, j])
+
+    novas = np.average(matriz, axis=0)
 
     return novas, erros
 
 
-# |%%--%%| <el040SsWYu|SWmXA6pcz0>
-
-N = 1
-PARTIÇÃO = 1000
-temperaturas = np.linspace(0.4, 3, 20)
-comprimentos = np.linspace(32, 100, 5, dtype=int)
-NÚMERO_DE_SEGURANÇA = 5000
-PASSOS_DE_MONTECARLO = 15000
-energias = np.zeros((N, PASSOS_DE_MONTECARLO))
-magnetizações = np.zeros((N, PASSOS_DE_MONTECARLO))
-temperaturas = np.linspace(0.4, 3, 20)
-métricas = np.zeros((temperaturas.size, N, 4), dtype=np.float64)
-erros = np.zeros((temperaturas.size, 4), dtype=np.float64)
-
-# |%%--%%| <SWmXA6pcz0|ZizSFwClwL>
+# |%%--%%| <el040SsWYu|bRqeuJnU2k>
 
 
-def plot_por_comprimento(comprimento: int):
+@jit(nopython=True)
+def variação_por_comprimento(comprimento: int):
+    métricas = np.zeros((TEMPERATURAS.size, 4))
+    erros = np.zeros((TEMPERATURAS.size, 4))
     NÚMERO_DE_SPINS = np.power(comprimento, 2)
-    for i, t in enumerate(temperaturas):
-        for j in range(N):
-            energias[j], magnetizações[j] = algoritmo_de_metropolis(
-                comprimento, t, PASSOS_DE_MONTECARLO
-            )
-        métricas[i], erros[i] = calcula_métricas(
+    for i, t in enumerate(TEMPERATURAS):
+        energias = np.zeros(PASSOS_DE_MONTECARLO)
+        magnetizações = np.zeros(PASSOS_DE_MONTECARLO)
+        energias, magnetizações = algoritmo_de_metropolis(
+            comprimento, t, PASSOS_DE_MONTECARLO
+        )
+        métricas_e_erros = calcula_métricas(
             PARTIÇÃO,
             NÚMERO_DE_SEGURANÇA,
             PASSOS_DE_MONTECARLO,
@@ -173,6 +155,27 @@ def plot_por_comprimento(comprimento: int):
             energias,
             magnetizações,
         )
+        métricas[i], erros[i] = métricas_e_erros
+    return métricas, erros
+
+
+# |%%--%%| <bRqeuJnU2k|SWmXA6pcz0>
+
+# Número de passos em uma "batch"
+PARTIÇÃO = 1000
+# Variações de Comprimento
+COMPRIMENTOS = np.linspace(32, 100, 5, dtype=int)
+# Passos de Monte Carlo ignorados (termalização)
+NÚMERO_DE_SEGURANÇA = 5000
+# Total de Passos de Monte Carlo
+PASSOS_DE_MONTECARLO = 15000
+# Variações de Temperatura
+TEMPERATURAS = np.linspace(0.4, 3, 20)
+
+# |%%--%%| <SWmXA6pcz0|O451up2cZ4>
+
+
+def plot_por_comprimento(métricas: NDArray, erros: NDArray, comprimento: int):
     titulos = [
         "Calor Específico",
         "Suscetibilidade Magnética",
@@ -187,8 +190,8 @@ def plot_por_comprimento(comprimento: int):
         ax.set_ylabel(titulos[i])
         ax.set_xlabel("Temperatura")
         ax.errorbar(
-            x=temperaturas,
-            y=métricas[:, 0][:, i],
+            x=TEMPERATURAS,
+            y=métricas[:, i],
             yerr=erros[:, i],
             fmt="o",
             markersize=1,
@@ -201,7 +204,8 @@ def plot_por_comprimento(comprimento: int):
     plt.show()
 
 
-# |%%--%%| <ZizSFwClwL|hONwWbcE6X>
+# |%%--%%| <O451up2cZ4|hONwWbcE6X>
 
-for comprimento in comprimentos:
-    plot_por_comprimento(comprimento)
+for comprimento in COMPRIMENTOS:
+    métricas, erros = variação_por_comprimento(comprimento)
+    plot_por_comprimento(métricas, erros, comprimento)
