@@ -3,6 +3,27 @@ mypy_path = "~/.config/mypy/stubs/"
 
 [tool.ruff]
 ignore = ["E501"]
+select = [
+    "F",
+    "E",
+    "W",
+    "C90",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "S",
+    "B",
+    "A",
+    "C4",
+    "ICN",
+    "PD",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "RUF",
+]
 
 [tool.poetry]
 name = "ifec"
@@ -13,9 +34,10 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.11,<3.12"
 matplotlib = "^3.7.1"
 numba = "^0.57"
+scipy = "^1.10.1"
 catppuccin-matplotlib = "^0.4"
 
 

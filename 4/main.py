@@ -49,7 +49,7 @@ def algoritmo_de_metropolis(L: int, T: float, passos: int):
             índice = int(S[k] * np.sum(S[viz[k]]) * 0.5 + 2)
             if np.random.rand() < expoentes[índice]:
                 S[k] = -1 * S[k]
-        energia[i] = -np.sum(S * (S[viz[:, 0]] + S[viz[:, 1]]))
+        energia[i] = -1 * np.sum(S * (S[viz[:, 0]] + S[viz[:, 1]]))
         magnetização[i] = np.sum(S)
 
     return energia, magnetização
