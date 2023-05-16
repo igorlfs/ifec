@@ -1,4 +1,5 @@
 """Atividade 4: Caixeiro Viajante."""
+import time
 from typing import cast
 
 import matplotlib.pyplot as plt
@@ -6,7 +7,11 @@ import numpy as np
 from numba import jit
 from numpy.typing import NDArray
 
-# |%%--%%| <MrHJR5Y2F4|5bIZbFwebX>
+# |%%--%%| <MrHJR5Y2F4|E2C7DjUfE8>
+
+start_time = time.time()
+
+# |%%--%%| <E2C7DjUfE8|5bIZbFwebX>
 
 # Define as posições aleatórias das cidades
 rng = np.random.default_rng(seed=42)
@@ -216,4 +221,8 @@ best_p, best_e, path_cost, temperatures = main(path)
 plot_path(x, y, best_p, best_e, NUM_OF_CITIES)
 plot_metrics(temperatures, path_cost, NUM_OF_CITIES)
 
-# |%%--%%| <CcDL0TMWst|Ld0P5EEuQ1>
+# |%%--%%| <CcDL0TMWst|1lBY7RYBvy>
+
+print("--- %s seconds ---" % (time.time() - start_time))
+
+# |%%--%%| <1lBY7RYBvy|Ld0P5EEuQ1>
