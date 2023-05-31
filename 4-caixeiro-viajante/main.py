@@ -178,7 +178,7 @@ O método de simulated annealing é razoável, basta fazer o tuning correto dos 
 °°°"""
 # |%%--%%| <6Y9DnasT0B|zl6jNTwcRe>
 
-file = np.loadtxt("posicoes.dat")
+file = np.loadtxt("4-caixeiro-viajante/posições.dat")
 x, y = file[:, 0], file[:, 1]
 path = np.zeros(len(x), dtype=np.int64)
 for i in range(len(x)):
