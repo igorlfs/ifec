@@ -2,7 +2,7 @@
 mypy_path = "~/.config/mypy/stubs/"
 
 [tool.ruff]
-ignore = ["E501"]
+ignore = ["E501", "B018"]
 select = [
     "F",
     "E",
@@ -39,6 +39,8 @@ matplotlib = "^3.7.1"
 numba = "^0.57"
 scipy = "^1.10.1"
 catppuccin-matplotlib = "^0.4"
+networkx = "^3.1"
+rustworkx = "^0.12.1"
 
 
 [build-system]
