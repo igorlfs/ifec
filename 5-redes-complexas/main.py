@@ -16,6 +16,7 @@ IMG_PATH = "./5-redes-complexas/img/"
 
 
 def generate_matrix(size: int, z: int, p: float):
+    """Gera uma matriz de adjacência de um grafo de Watts-Strogatz."""
     matrix_adj = np.zeros((size, size))
     for i in np.arange(size):
         for j in np.arange(z):
@@ -31,17 +32,11 @@ def generate_matrix(size: int, z: int, p: float):
     return matrix_adj
 
 
-# |%%--%%| <tGB5KTITxm|gx4PNjhNAq>
-
-
-def print_graph(g: nx.Graph):
-    nx.draw_circular(g)
-
-
-# |%%--%%| <gx4PNjhNAq|aIXMqSnEVE>
+# |%%--%%| <tGB5KTITxm|aIXMqSnEVE>
 
 
 def plot_bins(grx: rx.PyGraph):
+    """Imprime o histograma das distâncias entre os nós do grafo."""
     distances = rx.distance_matrix(grx).astype(int)
     distances_flattened = np.bincount(np.reshape(distances, distances.size))
     dist_range = np.arange(distances_flattened.size)
@@ -57,9 +52,10 @@ def plot_bins(grx: rx.PyGraph):
 
 
 def gen_plot_save(size: int, neighbors: int, prob: float):
+    """Gera e salva as imagens do grafo e do histograma."""
     adj_matrix = generate_matrix(size, neighbors, prob)
     graph = nx.Graph(adj_matrix)
-    print_graph(graph)
+    nx.draw_circular(graph)
     plt.savefig(f"{IMG_PATH}Graph L={size} Z={neighbors} P={prob}.png")
     plt.show()
     graph_rx = rx.networkx_converter(graph)
@@ -70,7 +66,8 @@ def gen_plot_save(size: int, neighbors: int, prob: float):
 # |%%--%%| <M0xNJbW9ov|WD1bzJACfQ>
 
 
-def gen_plot(size: int, neighbors: int, prob: float):
+def gen_plot_bins(size: int, neighbors: int, prob: float):
+    """Gera e plota o histograma das distâncias entre os nós do grafo, mas não salve."""
     adj_matrix = generate_matrix(size, neighbors, prob)
     graph = nx.Graph(adj_matrix)
     graph_rx = rx.networkx_converter(graph)
