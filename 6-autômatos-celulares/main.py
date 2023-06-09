@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-# |%%--%%| <UqvyFoZuFk|vb2ryy0ksp>
+# |%%--%%| <z3reQ0WBag|vb2ryy0ksp>
 
 SAUDÁVEL = 0
 INFECTADO = 1
@@ -53,12 +53,14 @@ def simula_infectados(tamanho: int, passos: int, num_infectados: int):
                         ):
                             novas_pessoas[i][j] = 1
         pessoas = novas_pessoas
+    # Evita plot vazio no final
+    plt.close()
     return frames
 
 
 # |%%--%%| <BhXrWgcenQ|Ovc5vhwOpB>
 
-frames = simula_infectados(100, 50, 7)
+frames = simula_infectados(100, 30, 7)
 frames[0].save(
     "6-autômatos-celulares/animation.gif",
     format="GIF",
