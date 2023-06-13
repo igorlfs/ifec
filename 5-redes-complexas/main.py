@@ -42,7 +42,7 @@ def plot_bins(grx: rx.PyGraph):
     distances_flattened = np.bincount(np.reshape(distances, distances.size))
     dist_range = np.arange(distances_flattened.size)
     # Nós dividimos por 2 pois a matriz de distâncias é simétrica
-    plt.bar(dist_range, distances_flattened / 2)
+    plt.bar(dist_range, distances_flattened / 2000)
     plt.xticks(dist_range)
     plt.title("Distruibuição das distâncias entre os nós do grafo")
     plt.xlabel("Distância")

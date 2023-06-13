@@ -2,17 +2,17 @@
 
 # |%%--%%| <wB6g7BwnFN|qGq4OeeWD1>
 
+import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
 import numpy as np
 from numba import jit
-import matplotlib.pyplot as plt
+from numpy.typing import NDArray
 
 # |%%--%%| <qGq4OeeWD1|hcdGp3jU6f>
 
-from numpy.typing import NDArray
 
 # |%%--%%| <hcdGp3jU6f|19Z6oUBWhn>
 
-import matplotlib.gridspec as gridspec
 
 # |%%--%%| <19Z6oUBWhn|ql26NSQkHF>
 
