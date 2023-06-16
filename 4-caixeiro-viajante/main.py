@@ -19,7 +19,7 @@ rng = np.random.default_rng(seed=42)
 # |%%--%%| <5bIZbFwebX|hpWZ5w2W65>
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def calculate_distance(
     num: np.int64, x: NDArray[np.float64], y: NDArray[np.float64]
 ) -> NDArray[np.float64]:
@@ -36,7 +36,7 @@ def calculate_distance(
 # |%%--%%| <hpWZ5w2W65|Vv5OsnyhvZ>
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def calculate_cost(
     num: np.int64, path: NDArray[np.int64], dist: NDArray[np.float64]
 ) -> float:
@@ -50,7 +50,7 @@ def calculate_cost(
 # |%%--%%| <Vv5OsnyhvZ|CR1bHWdpUs>
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def calculate_new_path(
     num: np.int64, path: NDArray[np.int64]
 ) -> tuple[NDArray[np.int64], int, int]:
@@ -77,7 +77,7 @@ def calculate_new_path(
 # |%%--%%| <CR1bHWdpUs|rSMST6bRwb>
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def mc_step(
     num: np.int64,
     beta: np.float64,
@@ -194,7 +194,7 @@ MULTIPLIER = 0.999999
 # |%%--%%| <wLMKZyeeLE|vd5zMy4ZaN>
 
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def main(path: NDArray[np.int64]):
     """Função com o loop principal de otimização."""
     path_cost = np.zeros(MC_STEPS, dtype=np.float64)
