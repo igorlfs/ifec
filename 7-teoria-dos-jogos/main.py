@@ -1,22 +1,22 @@
 """Atividade 7: Teoria dos Jogos."""
 import matplotlib.pyplot as plt
 import numpy as np
-from numba import jit
+from numba import jit, numba
 
 # |%%--%%| <GDwRoXIWIR|svGBvqDvFD>
 
 
 @jit(nopython=True)
-def play(player: np.ndarray, b: float):
+def play(current: np.ndarray, players: np.ndarray, b: float):
     """Rode uma partida de um jogador com seus vizinhos, com ganho `b`."""
     neighbors = [(1, 0), (0, 1), (-1, 0), (0, -1), (0, 0)]
-    current = players[player[0]][player[1]]
+    current_state = players[current[0]][current[1]]
     gains = 0
     for k in neighbors:
-        other = players[(player[0] + k[0]) % N][(player[1] + k[1]) % N]
-        if current == 1 and other == 1:
+        other_state = players[(current[0] + k[0]) % N][(current[1] + k[1]) % N]
+        if current_state and other_state:
             gains += 1.0
-        elif current == 0 and other == 1:
+        elif not current_state and other_state:
             gains += b
     return gains
 
@@ -29,35 +29,58 @@ def simulate(players: np.ndarray, passos: int, b: float):
     """Simula uma execução do dilema do prisioneiro."""
     # É necessário fazer a cópia para não interferir em execuções posteriores
     copy = players.copy()
-    cooperadores = np.zeros(passos)
-    for i in range(passos):
+    for _ in range(passos):
         idx = np.random.randint(0, N, size=2)
 
         neighbor = np.random.randint(0, 4)
         idx_neighbor = np.array([(idx[0] + neighbor) % N, (idx[1] + neighbor) % N])
 
-        cooperadores[i] = np.count_nonzero(copy)
-
-        gains = play(idx, b)
-        gains_neighbor = play(idx_neighbor, b)
+        gains = play(idx, copy, b)
+        gains_neighbor = play(idx_neighbor, copy, b)
 
         w = 1 / (1 + np.exp((gains - gains_neighbor) / K))
 
         if np.random.rand() < w:
             copy[idx[0]][idx[1]] = copy[idx_neighbor[0]][idx_neighbor[1]]
-    return cooperadores
+    helpers = np.count_nonzero(copy)
+    total = N * N
+    return helpers / total
 
 
-# |%%--%%| <LOS3FXNhrm|DRzVrniwMg>
+# |%%--%%| <LOS3FXNhrm|dBRhV89wgc>
 
-K = 0.5
+
+@jit(nopython=True, parallel=True)
+def plot_proportions(num_b: int, iterações: int):
+    """Plota a evolução da proporção de cooperadores no final da simulação."""
+    helpers = np.zeros(num_b)
+    linspace = np.linspace(1, 2, num_b)
+    for i in numba.prange(num_b):
+        helpers[i] = simulate(players, iterações, linspace[i])
+    return helpers, linspace
+
+
+# |%%--%%| <dBRhV89wgc|v7KeZhUTJv>
+
+K = 0.1
 N = 200
-players = np.random.choice(a=[0, 1], size=(N, N))
+ITERATIONS = 10_000_000
+NUM_B = 100
 
-# |%%--%%| <DRzVrniwMg|dBRhV89wgc>
+# |%%--%%| <v7KeZhUTJv|QvlnTucN6j>
 
-for i in np.linspace(1, 2, 5):
-    cooperadores = simulate(players, 4000000, i)
-    plt.plot(cooperadores)
+players = np.random.choice(a=[False, True], size=(N, N))
 
-# |%%--%%| <dBRhV89wgc|p5bJk82J0d>
+helpers, linspace = plot_proportions(100, ITERATIONS)
+plt.title(f"Proporção de cooperadores após {ITERATIONS} iterações com k={K}")
+plt.xlabel("b")
+plt.ylabel("Proporção de cooperadores")
+plt.plot(linspace, helpers)
+plt.axhline(y=0.4, linestyle="dashed", color="black")
+
+# |%%--%%| <QvlnTucN6j|DGOpZFab6x>
+r"""°°°
+Foi escolhido o valor de $K = 0.1$ pois era um intermediário razoável entre os extremos da especificação (0.02 e 0.5).
+
+É possível estimar que o valor de $b_1$ é próximo de 1.2, enquanto o valor de $b_2$ é próximo de 1.5. Não se sabe dizer porque houve a convergência para um valor próximo de $y = 0.4$, ao invés de 0.
+°°°"""
