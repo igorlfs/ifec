@@ -16,14 +16,14 @@ def random_walk(steps: int, dimensions: int):
 
 # |%%--%%| <i6ykH7ZEy8|Kl5T2Evw6j>
 
-positions = random_walk(10000, 1)
+positions = random_walk(10_000, 1)
 plt.title("Distância em função do número de passos")
 plt.plot(positions)
 plt.axhline(y=0, linestyle="dashed")
 
 # |%%--%%| <Kl5T2Evw6j|Lfo4ReWyGc>
 
-positions = random_walk(10000, 2)
+positions = random_walk(10_000, 2)
 plt.title("Dispersão dos passos no plano")
 plt.plot(positions[:, 0], positions[:, 1])
 plt.axhline(y=0, linestyle="dashed")
@@ -31,15 +31,24 @@ plt.axvline(x=0, linestyle="dashed")
 
 # |%%--%%| <Lfo4ReWyGc|A4aJZkkrpJ>
 
-for _, j in enumerate(np.linspace(10_000, 100_000, 9)):
+for j in [100_000, 1_000, 10]:
     z = int(round(j, 0))
     positions = random_walk(z, 2)
-    plt.plot(positions[:, 0], positions[:, 1])
+    plt.plot(positions[:, 0], positions[:, 1], label=z)
 plt.axhline(y=0, linestyle="dashed")
 plt.axvline(x=0, linestyle="dashed")
+plt.xlim([-150, 150])
+plt.ylim([-150, 150])
+plt.legend()
 plt.title("Múltiplas dispersões para tamanhos diferentes")
 
-# |%%--%%| <A4aJZkkrpJ|Vg8JIjJ8aG>
+# |%%--%%| <A4aJZkkrpJ|Yc0W3OpWeU>
+r"""°°°
+### B
+
+Não, a distância final não aumenta por cerca de 10 vezes. Parece não existir um padrão mutio claro.
+°°°"""
+# |%%--%%| <Yc0W3OpWeU|Vg8JIjJ8aG>
 
 
 def final_walk(w: int):
@@ -86,3 +95,9 @@ N = 10_000
 for i in [5, 3, 2, 1]:
     estimate(i, N)
     plt.title(f"Posição após {N} caminhadas")
+# |%%--%%| <EkM5txcruP|otjnJYQS1U>
+r"""°°°
+### C
+
+A Gaussiana se torna uma boa aproximação a partir de $N = 5$, mas deixa de ser "terrível" logo para $N = 2$.
+°°°"""
